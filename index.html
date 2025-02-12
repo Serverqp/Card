@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             direction: rtl;
-            background-color: #757474;
+            background-color: #889E73;
         }
         .grid {
             display: grid;
@@ -21,8 +21,8 @@
         .card {
             width: 100px;
             height: 100px;
-            background-color: #3a54cc;
-            color: white;
+            background-color: #FFF6DA;
+            color: #889E73(160, 7, 7);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,81 +41,82 @@
             border: 2px solid #007bff;
         }
         .matched {
-            background-color: #28a745 !important;
-            color: white;
+            background-color: #A9C46C !important;
+            color: rgb(0, 0, 0);
         }
         .mismatch {
-            background-color: red !important;
+            background-color: #FF8383 !important;
         }
     </style>
 </head>
 <body>
     <h1>تست</h1>
     <div class="grid" id="gameBoard"></div>
-    <script>
-        const pairs = [
-            ["تعداد یاران", "۳۱۳ نفر"],
-            ["غیبت صغری", "69 سال"],
-            ["غیبت کبری", "ادامه دارد"],
-            ["محل تولد", "سامرا"],
-            ["پدر امام زمان", "امام حسن عسگری"],
-            ["مادر امام زمان", "نرجس خاتون"],
-            ["محل ظهور", "کعبه"],
-            ["شرط ظهور", "آمادگی مردم"],
-            ["پرچم امام زمان", "یا لثارات الحسین"],
-            ["اصلی‌ترین دشمن امام زمان", "دجال"]
-        ];
+ <script>
+    const pairs = [
+        ["تعداد یاران", "۳۱۳ نفر"],
+        ["غیبت صغری", "69 سال"],
+        ["غیبت کبری", "ادامه دارد"],
+        ["محل تولد", "سامرا"],
+        ["پدر امام زمان", "امام حسن عسگری"],
+        ["مادر امام زمان", "نرجس خاتون"],
+        ["محل ظهور", "کعبه"],
+        ["شرط ظهور", "آمادگی مردم"],
+        ["پرچم امام زمان", "یا لثارات الحسین"],
+        ["اصلی‌ترین دشمن امام زمان", "دجال"]
+    ];
 
-        let cards = pairs.flat().sort(() => Math.random() - 0.5);
-        let gameBoard = document.getElementById("gameBoard");
-        let flippedCards = [];
-        let matchedPairs = 0;
+    let cards = pairs.flat().sort(() => Math.random() - 0.5);
+    let gameBoard = document.getElementById("gameBoard");
+    let flippedCards = [];
+    let matchedPairs = 0;
 
-        cards.forEach(text => {
-            let card = document.createElement("div");
-            card.classList.add("card");
-            card.dataset.value = text;
-            card.innerText = "?";
-            card.addEventListener("click", () => flipCard(card));
-            gameBoard.appendChild(card);
-        });
+    cards.forEach((text, index) => {
+        let card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.value = text;
+        card.innerText = index + 1; // نمایش عدد به جای علامت سؤال
+        card.dataset.index = index + 1; // ذخیره عدد برای استفاده مجدد
+        card.addEventListener("click", () => flipCard(card));
+        gameBoard.appendChild(card);
+    });
 
-        function flipCard(card) {
-            if (flippedCards.length < 2 && !card.classList.contains("flipped")) {
-                card.classList.add("flipped");
-                card.innerText = card.dataset.value;
-                flippedCards.push(card);
-            }
-            
-            if (flippedCards.length === 2) {
-                setTimeout(checkMatch, 800);
-            }
+    function flipCard(card) {
+        if (flippedCards.length < 2 && !card.classList.contains("flipped")) {
+            card.classList.add("flipped");
+            card.innerText = card.dataset.value;
+            flippedCards.push(card);
         }
 
-        function checkMatch() {
-            let [card1, card2] = flippedCards;
-            let pair = pairs.some(pair => pair.includes(card1.dataset.value) && pair.includes(card2.dataset.value));
-            
-            if (pair) {
-                card1.classList.add("matched");
-                card2.classList.add("matched");
-                matchedPairs++;
+        if (flippedCards.length === 2) {
+            setTimeout(checkMatch, 800);
+        }
+    }
+
+    function checkMatch() {
+        let [card1, card2] = flippedCards;
+        let pair = pairs.some(pair => pair.includes(card1.dataset.value) && pair.includes(card2.dataset.value));
+
+        if (pair) {
+            card1.classList.add("matched");
+            card2.classList.add("matched");
+            matchedPairs++;
+            flippedCards = [];
+            if (matchedPairs === pairs.length) {
+                alert("تبریک! شما تمام جفت‌ها را پیدا کردید.");
+            }
+        } else {
+            card1.classList.add("mismatch");
+            card2.classList.add("mismatch");
+            setTimeout(() => {
+                card1.classList.remove("flipped", "mismatch");
+                card2.classList.remove("flipped", "mismatch");
+                card1.innerText = card1.dataset.index; // بازگرداندن عدد قبلی
+                card2.innerText = card2.dataset.index; // بازگرداندن عدد قبلی
                 flippedCards = [];
-                if (matchedPairs === pairs.length) {
-                    alert("تبریک! شما تمام جفت‌ها را پیدا کردید.");
-                }
-            } else {
-                card1.classList.add("mismatch");
-                card2.classList.add("mismatch");
-                setTimeout(() => {
-                    card1.classList.remove("flipped", "mismatch");
-                    card2.classList.remove("flipped", "mismatch");
-                    card1.innerText = "?";
-                    card2.innerText = "?";
-                    flippedCards = [];
-                }, 500);
-            }
+            }, 500);
         }
-    </script>
+    }
+</script>
 </body>
 </html>
